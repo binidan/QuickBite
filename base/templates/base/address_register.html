@@ -1,0 +1,31 @@
+{% extends 'main.html' %} {% load static %} {% block content %}
+
+<main class="auth__layout">
+  <div class="container">
+    <div class="layout__box">
+      <div class="layout__boxHeader">
+        <div class="layout__boxTitle">
+          <h3>Address</h3>
+        </div>
+      </div>
+      <div class="layout__body">
+        <h2 class="auth__tagline">Fill your shipping address</h2>
+
+        <form class="form" method="POST" action="">
+          {% csrf_token %} {% for field in address_form %}
+          <div class="form__group form__group">
+            <label for="room_name">{{field.label}}</label>
+            {{field}}
+          </div>
+          {% endfor %}
+
+          <button class="btn btn--main" type="submit">
+
+            Register
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

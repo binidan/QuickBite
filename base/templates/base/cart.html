@@ -1,0 +1,83 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-12">
+    {% if order_exists %}
+    <div class="box-element">
+      <a class="btn btn-outline-dark" href="{% url 'home' %}">&#x2190; Back to Shopping</a>
+
+      <br />
+      <br />
+      
+      <table class="table">
+        <tr>
+          <th>
+            <h5>Items: <strong>{{order.order_total_}}</strong></h5>
+          </th>
+          <th>
+            <h5>Total:<strong> ${{order.order_price}}</strong></h5>
+          </th>
+          <th>
+            <a
+              style="float: right; margin: 5px"
+              class="btn btn-success"
+              href="{% url 'checkout' %}"
+              >Continue</a
+            >
+          </th>
+        </tr>
+      </table>
+    </div>
+
+    <br />
+    <div class="box-element">
+      <div class="cart-row">
+        <div style="flex: 2"></div>
+        <div style="flex: 2"><strong>Item</strong></div>
+        <div style="flex: 1"><strong>Price</strong></div>
+        <div style="flex: 1"><strong>Quantity</strong></div>
+        <div style="flex: 1"><strong>Total</strong></div>
+      </div>
+      {% for item in items %}
+      <div class="cart-row">
+        <div style="flex: 2">
+          <img class="row-image" src="{{item.food.imageURL}}" />
+        </div>
+        <div style="flex: 2"><p>{{item.food.name}}</p></div>
+        <div style="flex: 1"><p>${{item.food.price}}</p></div>
+        <div style="flex: 1" class="quantity-update">
+          <p class="quantity" id="quantity_{{item.food.id}}">{{item.quantity}}</p>
+          <div class="btn-update">
+
+            <button data-food="{{item.food.id}}" data-action="add" class="update-cart">
+              <img
+                class="chg-quantity"
+                src="{% static  'images/arrow-up.png' %}"
+              />
+            </button>
+             <button data-food="{{item.food.id}}" data-action="remove" class="update-cart">
+              <img
+                class="chg-quantity"
+                src="{% static  'images/arrow-down.png' %}"
+              />
+            </button>
+          </div>
+        </div>
+        <div id="price_{{item.food.id}}" style="flex: 1"><p>${{item.item_price}}</p></div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+        <div class="box-element">
+      <a class="btn btn-outline-dark" href="{% url 'home' %}">&#x2190; Continue Shopping</a>
+
+      <br />
+      <br />
+      <p>Cart is empty</p>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock content %}
