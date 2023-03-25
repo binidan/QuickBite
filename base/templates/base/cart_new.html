@@ -1,0 +1,92 @@
+{% extends 'main_new.html' %}
+    {% load static %}
+    {% block content %}
+
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'home' %}">Home</a>
+                    <a class="breadcrumb-item text-dark" href="{% url 'shop' %}">Shop</a>
+                    <span class="breadcrumb-item active">Shopping Cart</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+
+    <!-- Cart Start -->
+    <div class="container-fluid">
+        {% if items %}
+        <div class="row px-xl-5">
+            <div class="col-lg-8 table-responsive mb-5">
+                <table class="table table-light table-borderless table-hover text-center mb-0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Products</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="list-cart" class="align-middle">
+                        {% for item in items %}
+                        <tr id="{{item.food.id}}">
+                            <td class="align-middle"><img src="{{item.food.imageURL}}" alt="" style="align-self: start; width: 50px; height: 50px;">{{item.food.name}}</td>
+                            <td class="align-middle">${{item.food.price}}</td>
+                            <td class="align-middle">
+                                <div class="input-group quantity mx-auto" style="width: 100px;">
+                                    <div class="input-group-btn">
+                                        <button data-food="{{item.food.id}}" data-action="remove" class="btn btn-sm btn-primary btn-minus update-cart" >
+                                        <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" id="quantity_{{item.food.id}}" value="{{item.quantity}}">
+                                    <div class="input-group-btn">
+                                        <button data-food="{{item.food.id}}" data-action="add" class="btn btn-sm btn-primary btn-plus update-cart">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td id="price_{{item.food.id}}" class="align-middle">${{item.item_price}}</td>
+                            <td class="align-middle"><button data-food="{{item.food.id}}" data-action="delete" class="btn btn-sm btn-danger update-cart"><i class="fa fa-times"></i></button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-lg-4">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Cart Summary</span></h5>
+                <div class="bg-light p-30 mb-5">
+                    <div class="border-bottom pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6>Subtotal</h6>
+                            <h6 id="order-price">${{order.order_price}}</h6>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Delivery</h6>
+                            <h6 class="font-weight-medium">$4</h6>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5>Total</h5>
+                            <h5 id="total-price">${{order.total_price}}</h5>
+                        </div>
+                        <a href="{% url 'checkout' %}"><button id="checkout-btn" class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h6 class="d-flex align-items-center"><a href="{% url 'shop' %}" class="nav-link">Click here</a> to add more to your cart</h6>
+        {% else %}
+        <h6 class="d-flex align-items-center">There are no items added to carts <a href="{% url 'shop' %}" class="nav-link">click here</a> to add items to your cart</h6>
+        {% endif %}
+    </div>
+    <!-- Cart End -->
+
+    {% endblock content %}

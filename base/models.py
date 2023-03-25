@@ -28,6 +28,7 @@ class Address(models.Model):
     country = models.CharField(max_length=30)
     state = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
+    address1 = models.CharField(max_length=150, null=True)
     street = models.CharField(max_length=150)
     pincode = models.CharField(
         max_length=6,
@@ -41,11 +42,26 @@ class Address(models.Model):
 
 
 
+
 class Category(models.Model):
-    name = models.CharField(max_length=100)
+    parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank =True, null=True)
+    title = models.CharField(max_length=100) 
+    slug = models.SlugField(null=True)
 
     def __str__(self):
-        return self.name
+        return self.title
+
+    class Meta:
+        unique_together = ('slug', 'parent',)    
+        verbose_name_plural = "categories"     
+
+    def __str__(self):                           
+        full_path = [self.title]                  
+        k = self.parent
+        while k is not None:
+            full_path.append(k.title)
+            k = k.parent
+        return ' -> '.join(full_path[::-1])  
 
 
 class Food(models.Model):
@@ -56,6 +72,7 @@ class Food(models.Model):
     id = models.CharField(max_length=36, primary_key=True, default=get_default_id, editable=False)
     name = models.CharField(max_length=100)
     price = models.DecimalField(validators=[MinValueValidator(0)], max_digits=5, decimal_places=2)
+    discount = models.DecimalField(validators=[MinValueValidator(0)], max_digits=5, decimal_places=2)
     description = models.TextField(null=True, blank=True)
     ingredients = models.TextField(null=True)
     in_stock = models.BooleanField(default=True)
@@ -63,6 +80,11 @@ class Food(models.Model):
     
     def __str__(self):
         return self.name
+    
+    @property
+    def total_cost(self):
+        cost = self.price + self.discount
+        return cost
 
     @property
     def imageURL(self):
@@ -86,11 +108,16 @@ class Order(models.Model):
 
     def __str__(self):
         return self.id
-
+    
     @property
     def order_price(self):
         orderitems = self.item_set.all()
         total = sum(item.item_price for item in orderitems)
+        return total
+    
+    @property
+    def total_price(self):
+        total = self.order_price + 4
         return total
 
     @property
@@ -103,7 +130,7 @@ class Order(models.Model):
 class Item(models.Model):
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
     food = models.ForeignKey(Food, on_delete=models.CASCADE, null=True, blank=True)
-    quantity = models.PositiveIntegerField(default=0, null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=1, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
     @property

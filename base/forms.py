@@ -14,6 +14,11 @@ class AddressForm(ModelForm):
         fields = '__all__'
         exclude = ['customer']
 
+    def __init__(self, *args, **kwargs):
+        super(AddressForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
 
 class UserForm(ModelForm):
     class Meta:

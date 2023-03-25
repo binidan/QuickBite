@@ -6,24 +6,40 @@ from .forms import MyUserCreationForm, AddressForm, UserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Customer, Food, Order, Item, Address
+from .models import Customer, Food, Item, Address, Order
 from django.contrib import messages
 import json
 
 # Create your views here.
 def home(request):
+    categories_all = Category.objects.all()
+    foods_recent = Food.objects.all()[0:5]
+    foods_discount = Food.objects.order_by('discount')[0:5]
+    foods_all = Food.objects.all()
+    context = {
+                'categories_all':categories_all,
+                'foods_recent':foods_recent,
+                'foods_discount':foods_discount,
+                'foods_all':foods_all
+              }
+    return render(request, 'base/home_new.html', context)
+
+
+def shop(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
+    price_range = request.GET.get('price_range') if request.GET.get('price_range') != None else ''
+    min_price, max_price = price_range.split('-') if price_range else (0, 100000)
     foods = Food.objects.filter(
         Q(name__icontains=q) |
-        Q(category__name__icontains=q) |
-        Q(description__icontains=q)
+        Q(category__title__icontains=q) |
+        Q(description__icontains=q),
+        Q(price__gte=min_price, price__lte=max_price)
     )
-    categories = Category.objects.all()[0:5]
+
     context = {
-                'categories':categories,
-                'foods':foods
-              }
-    return render(request, 'base/home.html', context)
+        'foods':foods
+    }
+    return render(request, 'base/shop.html', context)
 
 
 def loginPage(request):
@@ -87,21 +103,20 @@ def updateUser(request):
     return render(request, 'base/update_user.html', {'form':form})
 
 def addressRegister(request):
-    address_form = AddressForm()
+
     if request.method == 'POST':
-        Address.objects.create(
-            customer=request.user,
-            country=request.POST.get('country'),
-            state=request.POST.get('state'),
-            city=request.POST.get('city'),
-            street=request.POST.get('street'),
-            pincode=request.POST.get('pincode')
-        )
-        return redirect('checkout')
+        address_form = AddressForm(request.POST)
+        if address_form.is_valid():
+            address = address_form.save(commit=False)
+            address.customer = request.user
+            address.save()
+            return redirect('checkout')
+    else:
+        address_form = AddressForm()
     context = {
         'address_form':address_form
     }
-    return render(request, 'base/address_register.html', context)
+    return render(request, 'base/checkout_new.html', context)
 
 
 def updateItem(request):
@@ -116,22 +131,31 @@ def updateItem(request):
     item, created = Item.objects.get_or_create(order=order, food=food)
     if action == 'add':
         item.quantity = item.quantity + 1
-    elif action == 'remove':
+    elif action == 'remove' and item.quantity > 1:
         item.quantity = item.quantity - 1
+    elif action == 'delete':
+        item.quantity = 0
     item.save()
 
     if item.quantity <= 0:
         item.delete()
 
+    count = order.item_set.all().count()
+
     response_data = {
+        'order_price':order.order_price,
+        'total_price':order.total_price,
         'price':item.item_price,
-        'quantity': item.quantity
+        'quantity': item.quantity,
+        'count':count
     }
 
     return JsonResponse(response_data, safe=False)
 
 
 def cartPage(request):
+    items = None
+    order = None
     if request.user.is_authenticated:
         customer = request.user
         try:
@@ -139,8 +163,7 @@ def cartPage(request):
             items = order.item_set.all()
 
         except Order.DoesNotExist:
-            order = None
-            items = None
+            pass
     order_exists = Order.objects.filter(customer=request.user, complete=False).exists()
     context = {
         'items':items,
@@ -148,29 +171,35 @@ def cartPage(request):
         'order_exists':order_exists
     }
 
-    return render(request, 'base/cart.html', context)
+    return render(request, 'base/cart_new.html', context)
 
 
 def checkOutPage(request):
-    addresses = Address.objects.filter(customer=request.user)
-    if request.user.is_authenticated:
+    order = None
+    items = None   
+    addresses = None
+    address_form = AddressForm()
+    if request.user.is_authenticated:      
         customer = request.user
-        try:
-            order = Order.objects.get(customer=customer, complete=False)
-            items = order.item_set.all()
-
-        except Order.DoesNotExist:
-            order = None
-            items = None
+        addresses = Address.objects.filter(customer=customer)
+        order = Order.objects.get(customer=customer, complete=False)
+        items = order.item_set.all()
+        if not order:
+            order = Order.objects.create(customer=customer, complete=False)
     
     if request.method == 'POST':
         selected_address_id = request.POST.get('address')
         selected_address = Address.objects.get(pk=selected_address_id)
-        order.address = selected_address
-        order.complete = True
-        order.save()
-        messages.success(request, 'Order has been placed successfully!')
-        return redirect('home')
+        if order is not None:
+            order.address = selected_address
+            order.complete = True
+            order.save()
+            messages.success(request, 'Order has been placed successfully!')
+            return redirect('home')
+        else:
+            # Handle the case where an Order object does not exist
+            messages.error(request, 'You do not have any pending orders.')
+            return redirect('checkout')
 
     address_exists = Address.objects.filter(customer=request.user).exists()
     order_exists = Order.objects.filter(customer=request.user, complete=False).exists()
@@ -180,19 +209,22 @@ def checkOutPage(request):
         'address_exists':address_exists,
         'items':items,
         'order':order, 
-        'addresses':addresses
+        'addresses':addresses,
+        'address_form':address_form
         }
 
-    return render(request, 'base/checkout.html', context)
+    return render(request, 'base/checkout_new.html', context)
 
 
 def orderPage(request):
+    orders = None
+    order_exists = False
     if request.user.is_authenticated:
         orders = Order.objects.filter(customer=request.user, complete=True)
         
         order_exists = Order.objects.filter(customer=request.user, complete=True).exists()
-        context = {
-            'orders': orders,
-            'order_exists': order_exists,
-        }
+    context = {
+        'orders': orders,
+        'order_exists': order_exists,
+    }
     return render(request, 'base/order.html', context)
