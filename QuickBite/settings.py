@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = str(os.getenv('SECRET_KEY'))
+SECRET_KEY = 'django-insecure-)%9rlzp=@(m7%*4x*q3d!74649z1p-p)4ukf5o=ghd^$64g*%_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -88,14 +88,25 @@ WSGI_APPLICATION = 'QuickBite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'quickbite', 
+#         'USER': 'root', 
+#         'PASSWORD': 'Bini1992',
+#         'HOST': 'localhost', 
+#         'PORT': '3306',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'quickbite', 
-        'USER': 'root', 
-        'PASSWORD': 'Bini1992+2000',
-        'HOST': 'localhost', 
-        'PORT': '3306',
+        'NAME': 'quickbites$main',
+        'USER': 'quickbites',
+        'PASSWORD': 'bini1992',
+        'HOST': 'quickbite.mysql.pythonanywhere-services.com',
+        'PORT': '3306'
     }
 }
 
