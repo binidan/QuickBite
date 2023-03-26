@@ -74,19 +74,19 @@
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
                         <h1 class="fa fa-check text-primary m-0 mr-3"></h1>
-                        <h5 class="font-weight-semi-bold m-0">Quality Product</h5>
+                        <h5 class="font-weight-semi-bold m-0">Quality Food</h5>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
                         <h1 class="fa fa-shipping-fast text-primary m-0 mr-2"></h1>
-                        <h5 class="font-weight-semi-bold m-0">Free Shipping</h5>
+                        <h5 class="font-weight-semi-bold m-0">Free Delivery</h5>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
                         <h1 class="fas fa-exchange-alt text-primary m-0 mr-3"></h1>
-                        <h5 class="font-weight-semi-bold m-0">14-Day Return</h5>
+                        <h5 class="font-weight-semi-bold m-0">Fast Delivery</h5>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
@@ -107,7 +107,7 @@
                 {% for category in categories_all %}
                     {% if category.food_set.all.count != 0 %}
                         <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-                            <a class="text-decoration-none" href="">
+                            <a class="text-decoration-none" href="{% url 'shop' %}?q={{category.title}}">
                                 <div class="cat-item d-flex align-items-center mb-4">
                                     <div class="overflow-hidden" style="width: 100px; height: 100px;">
                                         <img class="img-fluid" src="{{category.food_set.first.imageURL}}" alt="" style="object-fit: cover; width: 100%; height: 100%;">
@@ -136,10 +136,9 @@
                             <div class="product-img position-relative overflow-hidden" style="object-fit: cover; width: 100%; height: 350px;">
                                 <img class="img-fluid w-100" src="{{food.imageURL}}" alt="" style="object-fit: cover; width: 100%; height: 100%;">
                                 <div class="product-action">
-                                    <a data-food="{{food.id}}" data-action="add" class="btn btn-outline-dark btn-square update-cart" href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
-                                    <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
-                                    <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a>
+                                    <a data-food="{{food.id}}" data-action="add" class="btn btn-outline-dark btn-square update-cart" href="{% url 'cart' %}"><i class="fa fa-shopping-cart"></i></a>
+                                    <a class="btn btn-outline-dark btn-square" href="{% url 'product' food.id %}"><i class="fa fa-sync-alt"></i></a>
+                                    <a class="btn btn-outline-dark btn-square" href="{% url 'shop' %}?q={{food.category.first.title}}"><i class="fa fa-search"></i></a>
                                 </div>
                             </div>
                             <div class="text-center py-4">
@@ -148,16 +147,11 @@
                                     <h5>${{food.price}}</h5><h6 class="text-muted ml-2"><del>${{food.total_cost}}</del></h6>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-center mb-1">
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small>(99)</small>
+                                    <p>{{food.shortDesc}}</p>
                                 </div>
                             </div>
                         </div>
-                    </div>                
+                    </div>               
                 {% endfor %}
             </div>
         </div>
@@ -202,10 +196,9 @@
                             <div class="product-img position-relative overflow-hidden" style="object-fit: cover; width: 100%; height: 350px;">
                                 <img class="img-fluid w-100" src="{{food.imageURL}}" alt="" style="object-fit: cover; width: 100%; height: 100%;">
                                 <div class="product-action">
-                                    <a data-food="{{food.id}}" data-action="add" class="btn btn-outline-dark btn-square update-cart" href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
-                                    <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
-                                    <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a>
+                                    <a data-food="{{food.id}}" data-action="add" class="btn btn-outline-dark btn-square update-cart" href="{% url 'cart' %}"><i class="fa fa-shopping-cart"></i></a>
+                                    <a class="btn btn-outline-dark btn-square" href="{% url 'product' food.id %}"><i class="fa fa-sync-alt"></i></a>
+                                    <a class="btn btn-outline-dark btn-square" href="{% url 'shop' %}?q={{food.category.first.title}}"><i class="fa fa-search"></i></a>
                                 </div>
                             </div>
                             <div class="text-center py-4">
@@ -214,12 +207,7 @@
                                     <h5>${{food.price}}</h5><h6 class="text-muted ml-2"><del>${{food.total_cost}}</del></h6>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-center mb-1">
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small class="fa fa-star text-primary mr-1"></small>
-                                    <small>(99)</small>
+                                    <p>{{food.shortDesc}}</p>
                                 </div>
                             </div>
                         </div>

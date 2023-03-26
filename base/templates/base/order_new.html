@@ -1,0 +1,87 @@
+{% extends 'main_new.html' %} 
+{% block content %}
+        <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'home' %}">Home</a>
+                    <a class="breadcrumb-item text-dark" href="{% url 'shop' %}">Shop</a>
+                    <span class="breadcrumb-item active">Order</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+    <div class="row px-xl-5">
+        <div class="col-lg-8">
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Completed Orders</span></h5>
+            {% for order in orders%}
+            <div class="bg-light p-30 mb-5" style="border-radius: 20px;">
+                <p>Order Id: {{order.id}}</p>
+                <h5>Total Price: ${{order.total_price}}</h5>
+                {% if order.delivered %}
+                    <p style="color: rgb(4, 240, 4);">Delivered</p>
+                {% else %}
+                    <p style="color: green;">Not Yet Delivered</p>
+                {% endif %}
+                <table class="table table-light table-borderless table-hover text-left mb-0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Products</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="list-cart" class="align-middle">
+                        {% for item in order.item_set.all %}
+                        <tr id="{{item.food.id}}">
+                            <td class="align-middle"><img src="{{item.food.imageURL}}" alt="" style="margin-left: 0%; width: 50px; height: 50px;">{{item.food.name}}</td>
+                            <td class="align-middle">${{item.food.price}}</td>
+                            <td class="align-middle">
+                                <div class="input-group quantity mx-auto" style="width: 100px;">
+                                    <p style="margin-top: 25%;">{{item.quantity}}</p>
+                                </div>
+                            </td>
+                            <td id="price_{{item.food.id}}" class="align-middle">${{item.item_price}}</td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <hr>
+            {% endfor %}
+        </div>
+
+        <div class="col-lg-4">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Orders Summary</span></h5>
+                <div class="bg-light p-30 mb-5">
+                    <div class="border-bottom">
+                        <h6 class="mb-3">Pending</h6>
+                        <div class="d-flex justify-content-between">
+                            <p><a href="{% url 'checkout' %}">Go to checkout</a></p>
+                            <p>{{orders_p}}</p>
+                        </div>
+                    </div>
+                    <div class="border-bottom pt-3 pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6>Not Delivered</h6>
+                            <h6>{{orders_n}}</h6>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Delivered</h6>
+                            <h6 class="font-weight-medium">{{orders_d}}</h6>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5>Total Number of Orders</h5>
+                            <h5>{{orders_t}}</h5>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+{% endblock content %}

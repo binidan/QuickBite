@@ -93,6 +93,11 @@ class Food(models.Model):
         except:
             url = ''
         return url
+    
+    @property
+    def shortDesc(self):
+        desc = self.description[:35]
+        return desc
 
 
 class Order(models.Model):

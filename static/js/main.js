@@ -176,4 +176,3 @@ for (let i = 0; i < removeButtons.length; i++) {
 //   checkoutBtn.addEventListener("click", () => {
 //     window.location.href = "../../base/templates/base/checkout.html";
 //   });
-

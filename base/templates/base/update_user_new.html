@@ -1,0 +1,55 @@
+{% extends 'main_new.html' %}
+{% load static %}
+{% block content %}
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'home' %}">Home</a>
+                    <a class="breadcrumb-item text-dark" href="{% url 'shop' %}">Shop</a>
+                    <span class="breadcrumb-item active">Update Profile</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+<main class="auth__layout">
+  <div class="container">
+    <div class="layout__box">
+      <div class="layout__boxHeader">
+
+      </div>
+      <div class="layout__body" style="width: 40%; margin-left: 30%;">
+        <!-- <h2 class="auth__tagline">Find your favourite food!</h2> -->
+        <h3 class="auth__tagline">Update your info</h3>
+
+        <form class="form" method="POST" action="{% url 'update-user' %}">
+          {% csrf_token %} 
+          {% for field in form %}
+          <div class="form__group form__group">
+            <label for="room_name">{{field.label}}</label>
+            {{field}} 
+            {% if field.errors %}
+            <div class="form__group__error">
+              {% for error in field.errors %}
+              <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <div class="d-flex">
+            <a style="color: rgb(4, 4, 31); margin-top: 5%; margin-left: 5%;" href="{% url 'home' %}" class="btn__signin"><h4>Cancel</h4></a>
+          <button class="btn btn--main btn btn-block btn-primary font-weight-bold py-3" type="submit" style="width: 50%; margin-top: 5px; margin-left: 30%;">
+                Update
+          </button>
+          
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

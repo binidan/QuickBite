@@ -22,7 +22,8 @@
         {% if items %}
         <div class="row px-xl-5">
             <div class="col-lg-8 table-responsive mb-5">
-                <table class="table table-light table-borderless table-hover text-center mb-0">
+                <h6 class="d-flex align-items-center"><a href="{% url 'shop' %}" class="nav-link">Click here</a> to add more to your cart</h6>
+                <table class="table table-light table-borderless table-hover text-left mb-0">
                     <thead class="thead-dark">
                         <tr>
                             <th>Products</th>
@@ -82,7 +83,6 @@
                 </div>
             </div>
         </div>
-        <h6 class="d-flex align-items-center"><a href="{% url 'shop' %}" class="nav-link">Click here</a> to add more to your cart</h6>
         {% else %}
         <h6 class="d-flex align-items-center">There are no items added to carts <a href="{% url 'shop' %}" class="nav-link">click here</a> to add items to your cart</h6>
         {% endif %}

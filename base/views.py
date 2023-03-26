@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from .models import Category, Food
 from django.db.models import Q
-from .forms import MyUserCreationForm, AddressForm, UserForm
+from .forms import MyUserCreationForm, AddressForm, UserForm, UpdateForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -44,6 +44,7 @@ def shop(request):
 
 def loginPage(request):
     page = 'login'
+    login_form = UserForm()
     if request.user.is_authenticated:
         return redirect('home')
     if request.method == 'POST':
@@ -61,7 +62,7 @@ def loginPage(request):
         else:
             messages.error(request, "Username and password does not match")
 
-    return render(request, 'base/login_register.html', {'page':page})
+    return render(request, 'base/login_register_new.html', {'page':page, 'login_form':login_form})
 
 
 def logoutUser(request):
@@ -84,7 +85,7 @@ def registerPage(request):
             return redirect('home')
         else:
             messages.error(request, 'An error occured during registration')
-    return render(request, 'base/login_register.html', {'form':form})
+    return render(request, 'base/login_register_new.html', {'form':form})
 
 def userProfile(request, pk):
     pass
@@ -92,18 +93,17 @@ def userProfile(request, pk):
 @login_required(login_url='login')
 def updateUser(request):
     user = request.user
-    form = UserForm(instance=user)
+    form = UpdateForm(instance=user)
 
     if request.method == 'POST':
-        form = UserForm(request.POST, request.FILES, instance=user)
+        form = UpdateForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Profile is updated successfully!')
             return redirect('home')
-    return render(request, 'base/update_user.html', {'form':form})
+    return render(request, 'base/update_user_new.html', {'form':form})
 
 def addressRegister(request):
-
     if request.method == 'POST':
         address_form = AddressForm(request.POST)
         if address_form.is_valid():
@@ -181,9 +181,13 @@ def checkOutPage(request):
     address_form = AddressForm()
     if request.user.is_authenticated:      
         customer = request.user
-        addresses = Address.objects.filter(customer=customer)
-        order = Order.objects.get(customer=customer, complete=False)
-        items = order.item_set.all()
+        try:
+            addresses = Address.objects.filter(customer=customer)
+            order = Order.objects.get(customer=customer, complete=False)
+            items = order.item_set.all()
+        except:
+            addresses = None
+            order = None
         if not order:
             order = Order.objects.create(customer=customer, complete=False)
     
@@ -216,15 +220,41 @@ def checkOutPage(request):
     return render(request, 'base/checkout_new.html', context)
 
 
+def productPage(request, pk):
+    food = get_object_or_404(Food, id=pk)
+    image = food.imageURL
+    ingredients = food.description.split(" ")
+    category = food.category.first()
+    context = {
+        'category':category,
+        'ingredients':ingredients,
+        'image':image,
+        'food':food
+    }
+    return render(request, 'base/product.html', context)
+
+
 def orderPage(request):
     orders = None
+    orders_p, orders_d, orders_n, orders_t = (0, 0, 0, 0)
     order_exists = False
     if request.user.is_authenticated:
         orders = Order.objects.filter(customer=request.user, complete=True)
-        
         order_exists = Order.objects.filter(customer=request.user, complete=True).exists()
+        orders_p = Order.objects.filter(customer=request.user, complete=False).count()
+        orders_d = Order.objects.filter(customer=request.user, complete=True, delivered=True).count()
+        orders_n = Order.objects.filter(customer=request.user, complete=True, delivered=False).count()
+        orders_t = Order.objects.filter(customer=request.user).count()
     context = {
+        'orders_p': orders_p,
+        'orders_d': orders_d,
+        'orders_n': orders_n,
+        'orders_t': orders_t,
         'orders': orders,
         'order_exists': order_exists,
     }
-    return render(request, 'base/order.html', context)
+    return render(request, 'base/order_new.html', context)
+
+
+def aboutPage(request):
+    return render(request, 'base/about.html')

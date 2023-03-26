@@ -1,0 +1,76 @@
+{% extends 'main_new.html' %}
+{% load static %}
+{% block content %}
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'home' %}">Home</a>
+                    <a class="breadcrumb-item text-dark" href="{% url 'shop' %}">Shop</a>
+                    <span class="breadcrumb-item active">About Me</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+    <!-- About Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-6">
+                    <div class="row gx-3 h-100">
+                        <div style="align-self: flex-start !important;" class="col-6 align-self-start wow fadeInUp" data-wow-delay="0.1s">
+                            <img class="img-fluid" src="{% static 'images/biniyam.jpg' %}">
+                        </div>
+                        <div style="height: 50%;" class="col-6 align-self-end wow fadeInDown" data-wow-delay="0.1s">
+                            <img style="height: 100%;" class="img-fluid" src="{% static 'images/django.jpg' %}">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                    <p class="fw-medium text-uppercase text-primary mb-2">About Me</p>
+                    <h1 class="display-5 mb-4">I am CS student interested in backend</h1>
+                    <p class="mb-4">As a CS student with a focus on backend development, I am proficient in Django - a high-level Python web framework used for building complex web applications quickly and efficiently. I have a strong understanding of object-oriented programming principles and design patterns, which I use to create scalable and maintainable code.</p>
+                    <p class="mb-4">Language I used on this project are: </p>
+                    <div class="d-flex align-items-center mb-4">
+
+                        <div class="ms-4">
+                            <p><i class="fa fa-check text-primary me-2"></i>Django</p>
+                            <p><i class="fa fa-check text-primary me-2"></i>JavaScript</p>
+                            <p><i class="fa fa-check text-primary me-2"></i>HTML5</p>
+                            <p><i class="fa fa-check text-primary me-2"></i>CSS</p>
+                        </div>
+                    </div>
+                    <p class="mb-4"> Source Code:  <a style="color: rgb(1, 1, 63);" target="_blank" href="https://github.com/binidan/QuickBite">https://github.com/binidan/QuickBite</a></p>
+                    <div class="row pt-2 d-flex">
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 btn-lg-square rounded-circle bg-primary">
+                                    <i class="fa fa-envelope-open text-white"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <p class="mb-2">Email me</p>
+                                    <h5 class="mb-0">biniyamwahima@gmail.com</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="col-sm-6">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 btn-lg-square rounded-circle bg-primary">
+                                    <i class="fa fa-phone-alt text-white"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <p class="mb-2">Call me</p>
+                                    <h5 class="mb-0">+91 780 182 5084</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About End -->
+
+{% endblock content %}
