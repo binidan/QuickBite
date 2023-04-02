@@ -13,6 +13,15 @@
         </div>
     </div>
     <!-- Breadcrumb End -->
+             {% if messages %}
+                {% for message in messages %}
+                    <div style="color: red;" class="alert alert-{{ message.tags }} container align-items-center">
+                        {{ message }}
+                        
+                    </div>
+                {% endfor %}
+            {% endif %}
+
 <main class="auth__layout">
   {% if page == 'login' %}
   <div class="container">

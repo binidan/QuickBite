@@ -48,6 +48,7 @@ def loginPage(request):
     if request.user.is_authenticated:
         return redirect('home')
     if request.method == 'POST':
+        messages.success(request, None)
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
 
@@ -119,6 +120,7 @@ def addressRegister(request):
     return render(request, 'base/checkout_new.html', context)
 
 
+
 def updateItem(request):
     data = json.loads(request.body.decode("utf-8"))
     foodId = data['foodId']
@@ -152,7 +154,7 @@ def updateItem(request):
 
     return JsonResponse(response_data, safe=False)
 
-
+@login_required(login_url='login')
 def cartPage(request):
     items = None
     order = None
@@ -173,7 +175,7 @@ def cartPage(request):
 
     return render(request, 'base/cart_new.html', context)
 
-
+@login_required(login_url='login')
 def checkOutPage(request):
     order = None
     items = None   
@@ -209,6 +211,7 @@ def checkOutPage(request):
     order_exists = Order.objects.filter(customer=request.user, complete=False).exists()
 
     context = {
+        
         'order_exists':order_exists,
         'address_exists':address_exists,
         'items':items,
@@ -233,13 +236,13 @@ def productPage(request, pk):
     }
     return render(request, 'base/product.html', context)
 
-
+@login_required(login_url='login')
 def orderPage(request):
     orders = None
     orders_p, orders_d, orders_n, orders_t = (0, 0, 0, 0)
     order_exists = False
     if request.user.is_authenticated:
-        orders = Order.objects.filter(customer=request.user, complete=True)
+        orders = Order.objects.filter(customer=request.user, complete=True).order_by('-date')
         order_exists = Order.objects.filter(customer=request.user, complete=True).exists()
         orders_p = Order.objects.filter(customer=request.user, complete=False).count()
         orders_d = Order.objects.filter(customer=request.user, complete=True, delivered=True).count()

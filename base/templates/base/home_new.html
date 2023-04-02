@@ -1,6 +1,34 @@
 {% extends 'main_new.html' %}
     {% load static %}
     {% block content %}
+
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'success'%}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                            <p>Check Orders <a href="{% url 'order' %}">here</a></p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        <!-- Video Modal Start -->
+            <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>        
+                            <!-- 16:9 aspect ratio -->
+                            <div class="embed-responsive embed-responsive-16by9">
+                                <iframe class="embed-responsive-item" src="" id="video"  allowscriptaccess="always" allow="autoplay"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- Video Modal End -->
         <!-- Carousel Start -->
         <div class="container-fluid mb-3">
             <div class="row px-xl-5">
@@ -18,7 +46,7 @@
                                     <div class="p-3" style="max-width: 700px;">
                                         <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Welcome to My Personal Project</h1>
                                         <p class="mx-md-5 px-5 animate__animated animate__bounceIn">This project is a reflection of my personal interests and experiences.</p>
-                                        <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Order Now</a>
+                                        <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="{% url 'shop' %}">Order Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -28,7 +56,7 @@
                                     <div class="p-3" style="max-width: 700px;">
                                         <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Food Delivery Website</h1>
                                         <p class="mx-md-5 px-5 animate__animated animate__bounceIn">This website allows you to order a food and get delivered</p>
-                                        <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Order Now</a>
+                                        <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="{% url 'shop' %}">Order Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -38,7 +66,7 @@
                                     <div class="p-3" style="max-width: 700px;">
                                         <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Django Framework</h1>
                                         <p class="mx-md-5 px-5 animate__animated animate__bounceIn">I fully wrote the code of backend using django framework and use html and javascript templates with some additional features for frontend</p>
-                                        <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Order Now</a>
+                                        <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="{% url 'shop' %}">Order Now</a>
                                     </div>
                                 </div>
                             </div>
